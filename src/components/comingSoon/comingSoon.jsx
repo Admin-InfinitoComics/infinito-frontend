@@ -1,6 +1,6 @@
 import React from 'react';
 import '../comingSoon/style.css'; 
-import gifImage from '../../../../frontend/src/components/comingSoon/Untitled.gif';
+import gifImage from './Untitled.gif';
 
 const ComingSoonPage = () => {
   return (
