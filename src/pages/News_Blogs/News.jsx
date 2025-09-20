@@ -5,11 +5,11 @@ import All_news from './All_news'
 import FoundationSection from './Foundation_Section'
 import ArcherySlider from './ArcherySlider'
 import Spotlight from '../../components/spotlight/Spotlight.jsx'
-import Carousel from '../News_Blogs/Carousel'
+// import Carousel from '../News_Blogs/Carousel'
 const News = () => {
   return (
     <div>
-        <Carousel></Carousel>
+{/*         <Carousel></Carousel> */}
         <ArcheryNews />
         <ArcherySlider/>
         <Spotlight/>
