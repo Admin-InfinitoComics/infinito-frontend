@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 // Login user (sets cookie in browser)
 export const loginUser = async (email, password) => {
   try {
-    const response = await axiosInstance.post("/api/login", {
+    const response = await axiosInstance.post(`${BACKEND_URL}/api/login`, {
       email: email.toLowerCase(),
       password,
     });
@@ -28,7 +28,7 @@ export const loginUser = async (email, password) => {
 // Logout user
 export const logoutUser = async () => {
   try {
-    const response = await axiosInstance.post("/api/logout");
+    const response = await axiosInstance.post(`${BACKEND_URL}/api/logout`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Logout failed");
@@ -39,7 +39,7 @@ export const logoutUser = async () => {
 export const signUpUser = async (formData) => {
   try {
     const response = await axios.post(
-      BASE_URL + "/api/signup",
+      `${BACKEND_URL}/api/signup`,
       {
         email: formData.email.toLowerCase(),
         password: formData.password,
@@ -63,7 +63,7 @@ export const signUpUser = async (formData) => {
 // Forgot password
 export const forgetPasswordFunc = async (email) => {
   try {
-    const res = await axios.post(BASE_URL + "/api/forget-password", { email });
+    const res = await axios.post(`${BACKEND_URL}/api/forget-password`, { email });
     return res.data.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Forgot password request failed");
@@ -74,7 +74,7 @@ export const forgetPasswordFunc = async (email) => {
 export const resetPasswordFunc = async (id, token, newPassword) => {
   try {
     const res = await axios.post(
-      `${BASE_URL}/api/forget-password/${id}/${token}`,
+      `${BACKEND_URL}/api/forget-password/${id}/${token}`,
       { newPassword }
     );
     return res.data;
@@ -87,7 +87,7 @@ export const resetPasswordFunc = async (id, token, newPassword) => {
 
 // Get latest blog
 export const latestBlog = async () => {
-  const response = await axios.get(BASE_URL + "/blog/latestblog", {
+  const response = await axios.get(`${BACKEND_URL}/blog/latestblog`, {
     params: { limit: 1 },
   });
   return response?.data?.blogs[0];
@@ -95,24 +95,24 @@ export const latestBlog = async () => {
 
 // Foundation blogs
 export const getFoundationBlogs = async () => {
-  const res = await axios.get(BASE_URL + "/blog/foundation-blogs");
+  const res = await axios.get(`${BACKEND_URL}/blog/foundation-blogs`);
   return res.data;
 };
 
 // IC blogs
 export const getICBlogs = async () => {
-  const res = await axios.get(BASE_URL + "/blog/ic-blogs");
+  const res = await axios.get(`${BACKEND_URL}/blog/ic-blogs`);
   return res.data;
 };
 
 // Blog by ID
 export const getBlogsById = async (id) => {
-  const res = await axios.get(`${BASE_URL}/blog/getById/${id}`);
+  const res = await axios.get(`${BACKEND_URL}/blog/getById/${id}`);
   return res.data;
 };
 
 // All blogs
 export const getAllBlogs = async () => {
-  const res = await axios.get(`${BASE_URL}/blog/getallblog`);
+  const res = await axios.get(`${BACKEND_URL}/blog/getallblog`);
   return res.data.data;
 };
