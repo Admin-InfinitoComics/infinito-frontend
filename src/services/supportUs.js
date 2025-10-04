@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { BACKEND_URL } from '../utils/constants';
+import { BASE_URL } from '../utils/constants';
 
 export const getAllStories = async () => {
-  const response = await axios.get(`${BACKEND_URL}/timeline/getAll`);
+  const response = await axios.get(`${BASE_URL}/timeline/getAll`);
   const allStories = response.data.data;
   return allStories.filter((story) => story.category === "Support Us");
 };
@@ -10,7 +10,7 @@ export const getAllStories = async () => {
 
 export const createSupport = async (supportData, token) => {
   const response = await axios.post(
-    `${BACKEND_URL}/support/create`,
+    `${BASE_URL}/support/create`,
     supportData,
     {
       headers: {
@@ -25,6 +25,6 @@ export const createSupport = async (supportData, token) => {
 };
 
 export const getStats = async () => {
-    const res = await axios.get(`${BACKEND_URL}/support/statistics`);
+    const res = await axios.get(`${BASE_URL}/support/statistics`);
     return res.data.data;
 };

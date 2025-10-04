@@ -1,8 +1,8 @@
 import axios from "axios";
-import { BACKEND_URL } from '../utils/constants';
+import { BASE_URL } from '../utils/constants';
 
 export const fetchJob = async ()=>{
-    const res = await axios.get(`${BACKEND_URL}/career/getall`)
+    const res = await axios.get(`${BASE_URL}/career/getall`)
     return res;
 }
    
