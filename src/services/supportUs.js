@@ -1,30 +1,46 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
+import { BACKEND_URL } from '../config/server-config';
+
+// Create axios instance with credentials
+const axiosInstance = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Enable cookies to be sent with request
+});
 
 export const getAllStories = async () => {
-  const response = await axios.get(`${BASE_URL}/timeline/getAll`);
-  const allStories = response.data.data;
-  return allStories.filter((story) => story.category === "Support Us");
+  try {
+    const response = await axiosInstance.get(`/timeline/getAll`);
+    const allStories = response.data.data;
+    return allStories.filter((story) => story.category === "Support Us");
+  } catch (error) {
+    console.error("Error fetching support stories:", error);
+    throw error;
+  }
 };
 
-
-export const createSupport = async (supportData, token) => {
-  const response = await axios.post(
-    `${BASE_URL}/support/create`,
-    supportData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    }
-  );
-
-  return response.data;
-
+export const createSupport = async (supportData) => {
+  try {
+    // No need to pass token as it's handled by cookies now
+    const response = await axiosInstance.post(
+      `/support/create`,
+      supportData
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating support:", error);
+    throw error;
+  }
 };
 
 export const getStats = async () => {
-    const res = await axios.get(`${BASE_URL}/support/statistics`);
+  try {
+    const res = await axiosInstance.get(`/support/statistics`);
     return res.data.data;
+  } catch (error) {
+    console.error("Error fetching support statistics:", error);
+    throw error;
+  }
 };

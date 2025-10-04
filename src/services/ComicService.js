@@ -1,16 +1,30 @@
 import axios from 'axios'
-import { BASE_URL } from '../utils/constants.js'
+import { BACKEND_URL } from '../config/server-config'
+
+// Create axios instance with credentials
+const axiosInstance = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Enable cookies to be sent with request
+});
 
 export const fetchComics = async () => {
-    const res = await axios.get(`${BASE_URL}/comic`);
+  try {
+    const res = await axiosInstance.get(`/comic`);
     // console.log("RES in services: ", res);
     return res.data.data;
+  } catch (error) {
+    console.error("Error fetching comics:", error);
+    throw error;
+  }
 }
 
 export const fetchChapter = async (comicId) => {
-    console.log(comicId)
+  console.log(comicId)
   try {
-    const res = await axios.get(`${BASE_URL}/comicChap/${comicId}/chapters`);
+    const res = await axiosInstance.get(`/comicChap/${comicId}/chapters`);
     console.log(res);
     return res.data.data; 
   } catch (error) {

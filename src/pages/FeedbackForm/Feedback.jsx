@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import chat from '../../../assets/Images/Chat.png';
 import { FaArrowLeft } from 'react-icons/fa';
 import axios from 'axios';
-import { BASE_URL } from '../../utils/constants.js';
+import { BACKEND_URL } from '../../config/server-config.js';
 
 const FeedbackForm = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +61,7 @@ const FeedbackForm = () => {
 
     try {
       const token = localStorage.getItem('authtoken');
-      const response = await axios.post(`${BASE_URL}/api/feedback`, payload, {
+      const response = await axios.post(`${BACKEND_URL}/api/feedback`, payload, {
         headers: {
           'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` }),

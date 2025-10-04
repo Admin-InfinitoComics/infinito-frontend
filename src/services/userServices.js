@@ -1,9 +1,9 @@
 import axios from "axios";
-import {  BASE_URL } from "../config/server-config";
+import { BACKEND_URL } from "../config/server-config";
 
 // ✅ All axios requests that require auth must include cookies
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 // Login user (sets cookie in browser)
 export const loginUser = async (email, password) => {
   try {
-    const response = await axiosInstance.post(`${BASE_URL}/api/login`, {
+    const response = await axiosInstance.post(`/api/login`, {
       email: email.toLowerCase(),
       password,
     });
@@ -25,10 +25,10 @@ export const loginUser = async (email, password) => {
   }
 };
 
-// Logout user
+// Logout user (clears cookie)
 export const logoutUser = async () => {
   try {
-    const response = await axiosInstance.post(`${BASE_URL}/api/logout`);
+    const response = await axiosInstance.post(`/api/logout`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Logout failed");
@@ -38,8 +38,8 @@ export const logoutUser = async () => {
 // Signup user
 export const signUpUser = async (formData) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/api/signup`,
+    const response = await axiosInstance.post(
+      `/api/signup`,
       {
         email: formData.email.toLowerCase(),
         password: formData.password,
@@ -61,9 +61,9 @@ export const signUpUser = async (formData) => {
 // -------------------- PASSWORD --------------------
 
 // Forgot password
-export const forgetPasswordFunc = async (email) => {
+export const forgetPassword = async (email) => {
   try {
-    const res = await axios.post(`${BASE_URL}/api/forget-password`, { email });
+    const res = await axiosInstance.post(`/api/forget-password`, { email });
     return res.data.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Forgot password request failed");
@@ -73,8 +73,8 @@ export const forgetPasswordFunc = async (email) => {
 // Reset password via link
 export const resetPasswordFunc = async (id, token, newPassword) => {
   try {
-    const res = await axios.post(
-      `${BASE_URL}/api/forget-password/${id}/${token}`,
+    const res = await axiosInstance.post(
+      `/api/forget-password/${id}/${token}`,
       { newPassword }
     );
     return res.data;
@@ -86,33 +86,58 @@ export const resetPasswordFunc = async (id, token, newPassword) => {
 // -------------------- BLOGS --------------------
 
 // Get latest blog
-export const latestBlog = async () => {
-  const response = await axios.get(`${BASE_URL}/blog/latestblog`, {
-    params: { limit: 1 },
-  });
-  return response?.data?.blogs[0];
+export const getLatestBlog = async () => {
+  try {
+    const response = await axiosInstance.get(`/blog/latestblog`, { 
+      params: { limit: 1 }
+    });
+    return response?.data?.blogs[0];
+  } catch (error) {
+    console.error("Error fetching latest blog:", error);
+    throw error;
+  }
 };
 
 // Foundation blogs
 export const getFoundationBlogs = async () => {
-  const res = await axios.get(`${BASE_URL}/blog/foundation-blogs`);
-  return res.data;
+  try {
+    const res = await axiosInstance.get(`/blog/foundation-blogs`);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching foundation blogs:", error);
+    throw error;
+  }
 };
 
 // IC blogs
 export const getICBlogs = async () => {
-  const res = await axios.get(`${BASE_URL}/blog/ic-blogs`);   
-  return res.data;
+  try {
+    const res = await axiosInstance.get(`/blog/ic-blogs`);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching IC blogs:", error);
+    throw error;
+  }
 };
 
 // Blog by ID
-export const getBlogsById = async (id) => {
-  const res = await axios.get(`${BASE_URL}/blog/getById/${id}`);
-  return res.data;
+export const getBlogById = async (id) => {
+  try {
+    const res = await axiosInstance.get(`/blog/getById/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error fetching blog with ID ${id}:`, error);
+    throw error;
+  }
 };
 
 // All blogs
 export const getAllBlogs = async () => {
-  const res = await axios.get(`${BASE_URL}/blog/getallblog`);
-  return res.data.data;
+  try {
+    const res = await axiosInstance.get(`/blog/getallblog`);
+    return res.data.data;
+  } catch (error) {
+    console.error("Error fetching all blogs:", error);
+    throw error;
+  }
 };

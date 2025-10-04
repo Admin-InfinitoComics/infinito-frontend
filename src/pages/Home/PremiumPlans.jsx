@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
-import { BASE_URL } from "../../utils/constants.js";
+import { BACKEND_URL } from "../../config/server-config.js";
 import PremiumPlansShimmer from '../../shimmer/landingPageShimmer/PremiumPlansShimmer.jsx'
 
 import {
@@ -39,7 +39,7 @@ const PremiumPlans = () => {
   // Verify premium user
   const verifyPremiumUser = async () => {
     try {
-      const res = await axios.get(BASE_URL + "/payment/verify", {
+      const res = await axios.get(BACKEND_URL + "/payment/verify", {
         withCredentials: true,
       });
       console.log("here: ",res.data)
@@ -56,9 +56,9 @@ const PremiumPlans = () => {
 
     try {
       const token = localStorage.getItem("authtoken");
-      console.log(BASE_URL)
+      console.log(BACKEND_URL)
       const res = await axios.post(
-        `${BASE_URL}/payment/create`,
+        `${BACKEND_URL}/payment/create`,
         { membershipType: type },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,11 +1,31 @@
-import axios from 'axios'
-import { BASE_URL } from '../utils/constants.js'
+import axios from 'axios';
+import { BACKEND_URL } from '../config/server-config';
 
-export const getAll = async () =>{
-    const res = await axios.get(`${BASE_URL}/character/getAll`)
+// Create axios instance with credentials
+const axiosInstance = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Enable cookies to be sent with request
+});
+
+export const getAll = async () => {
+  try {
+    const res = await axiosInstance.get(`/character/getAll`);
     return res.data;
-}
-export const getCharacterById = async(Id)=>{
-    const res = await axios.get(`${BASE_URL}/character/get/`+Id);
+  } catch (error) {
+    console.error("Error fetching all characters:", error);
+    throw error;
+  }
+};
+
+export const getCharacterById = async (Id) => {
+  try {
+    const res = await axiosInstance.get(`/character/get/${Id}`);
     return res.data;
+  } catch (error) {
+    console.error(`Error fetching character with ID ${Id}:`, error);
+    throw error;
+  }
 }

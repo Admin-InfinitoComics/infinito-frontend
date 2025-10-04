@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { removeUser } from "../../redux/userSlice.js";
 import { FaLeaf, FaArrowRight } from "react-icons/fa";
-import { BASE_URL } from "../../utils/constants.js";
+import { BACKEND_URL } from "../../config/server-config.js";
 
 // Import images from local assets
 import comicImg from "../../../assets/Images/captainMarvel.png";
@@ -57,7 +57,7 @@ const MyAccountPage = () => {
     try {
       const confirmLogout = window.confirm("Are you sure you want to log out?");
       if (confirmLogout) {
-        await axios.post(`${BASE_URL}/api/logout`, {}, { withCredentials: true });
+        await axios.post(`${BACKEND_URL}/api/logout`, {}, { withCredentials: true });
 
         // Clear Redux state
         dispatch(removeUser());
