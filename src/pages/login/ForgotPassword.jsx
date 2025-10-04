@@ -3,7 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../../../assets/Images/backgroundImg.jpg';
-import { forgetPasswordFunc } from '../../services/userServices.js'; 
+import { forgetPassword } from '../../services/userServices.js'; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
 
     try {
       console.log("sending the mail");
-      const user = await forgetPasswordFunc(email);
+      const user = await forgetPassword(email);
       console.log(user);
       toast.success('Reset link sent to your email!');
       console.log('Reset link sent to:', user?.email);

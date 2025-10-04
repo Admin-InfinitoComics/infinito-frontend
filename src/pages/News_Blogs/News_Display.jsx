@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaRegUserCircle } from 'react-icons/fa';
-import { getBlogsById } from '../../services/userServices';
+import { getBlogById } from '../../services/userServices';
 import Trending from '../../constants/Trending';
 import { IoStarSharp } from "react-icons/io5";
 
@@ -13,7 +13,7 @@ const NewsDetails = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const blog = await getBlogsById(id);
+        const blog = await getBlogById(id);
         setSelectedNews(blog.data);
       } catch (error) {
         console.error("Failed to fetch blog:", error.message);
