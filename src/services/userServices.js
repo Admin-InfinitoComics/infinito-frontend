@@ -1,51 +1,76 @@
-import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
+import axios from "axios";
+import { BACKEND_URL } from "../config/server-config";
 
+// ✅ All axios requests that require auth must include cookies
+const axiosInstance = axios.create({
+  baseURL: BACKEND_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // crucial for sending/receiving cookies
+});
 
+// -------------------- AUTH --------------------
+
+// Login user (sets cookie in browser)
 export const loginUser = async (email, password) => {
-  const response = await axios.post( BASE_URL+'/api/login', {
-    email: email.toLowerCase(),
-    password,
-  });
-  return response.data;
-};
-
-export const latestBlog = async () => {
-  const response = await axios.get( BASE_URL+'/blog/latestblog', {
-    limit : 1
-  });
-  return response?.data?.blogs[0];
-}
-
-export const getFoundationBlogs = async () => {
-  const res = await axios.get(BASE_URL+'/blog/foundation-blogs'); 
-  return res.data;
-};
-
-export const getICBlogs = async () => {
-  const res = await axios.get(BASE_URL + '/blog/ic-blogs');
-  return res.data;
-};
-
-export const getBlogsById = async (id) => {
-  const res = await axios.get(`${BASE_URL}/blog/getById/${id}`);
-  return res.data;
-};
-
-export const getAllBlogs = async () => {
-  const res = await axios.get(`${BASE_URL}/blog/getallblog`);
-  return res.data.data; 
-};
-
-export const forgetPasswordFunc = async (email) => {
   try {
-    const res = await axios.post(`${BASE_URL}/api/forget-password`, {email});
-    return res.data.data;  
+    const response = await axiosInstance.post("/api/login", {
+      email: email.toLowerCase(),
+      password,
+    });
+    return response.data; // user info (token handled in cookie)
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Forgot password request failed');
+    throw new Error(error.response?.data?.message || "Login failed");
   }
 };
 
+// Logout user
+export const logoutUser = async () => {
+  try {
+    const response = await axiosInstance.post("/api/logout");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Logout failed");
+  }
+};
+
+// Signup user
+export const signUpUser = async (formData) => {
+  try {
+    const response = await axios.post(
+      BASE_URL + "/api/signup",
+      {
+        email: formData.email.toLowerCase(),
+        password: formData.password,
+        name: formData.name,
+        dob: formData.dob,
+        username: formData.username.trim().replace(/\s/g, ""),
+        newsLetter: formData.newsLetter,
+      },
+      { withCredentials: true } // optional, signup usually does not need auth
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Signup failed" };
+  }
+};
+
+
+
+// -------------------- PASSWORD --------------------
+
+// Forgot password
+export const forgetPasswordFunc = async (email) => {
+  try {
+    const res = await axios.post(BASE_URL + "/api/forget-password", { email });
+    return res.data.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Forgot password request failed");
+  }
+};
+
+// Reset password via link
 export const resetPasswordFunc = async (id, token, newPassword) => {
   try {
     const res = await axios.post(
@@ -54,30 +79,40 @@ export const resetPasswordFunc = async (id, token, newPassword) => {
     );
     return res.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Reset password failed');
+    throw new Error(error.response?.data?.message || "Reset password failed");
   }
 };
 
-export const signUpUser = async (formData) => {
-  try {
-    const response = await axios.post(BASE_URL + '/api/signup', {
-      email: formData.email.toLowerCase(),
-      password: formData.password,
-      name: formData.name,
-      dob: formData.dob,
-      username: formData.username.trim().replace(/\s/g, ""),
-      newsLetter: formData.newsLetter
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Signup failed" };
-  }
-};
+// -------------------- BLOGS --------------------
 
-export const verifyEmail = async (code) => {
-  const response = await axios.post(BASE_URL + "/api/verifyemail", {
-    code 
+// Get latest blog
+export const latestBlog = async () => {
+  const response = await axios.get(BASE_URL + "/blog/latestblog", {
+    params: { limit: 1 },
   });
-  return response;
+  return response?.data?.blogs[0];
 };
 
+// Foundation blogs
+export const getFoundationBlogs = async () => {
+  const res = await axios.get(BASE_URL + "/blog/foundation-blogs");
+  return res.data;
+};
+
+// IC blogs
+export const getICBlogs = async () => {
+  const res = await axios.get(BASE_URL + "/blog/ic-blogs");
+  return res.data;
+};
+
+// Blog by ID
+export const getBlogsById = async (id) => {
+  const res = await axios.get(`${BASE_URL}/blog/getById/${id}`);
+  return res.data;
+};
+
+// All blogs
+export const getAllBlogs = async () => {
+  const res = await axios.get(`${BASE_URL}/blog/getallblog`);
+  return res.data.data;
+};

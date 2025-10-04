@@ -1,22 +1,44 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const userSlice = createSlice({
-    name:"user",
-    initialState: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user"))
-        : null,
-    reducers: {
-  addUser: (state, action) => {
-    localStorage.setItem("user", JSON.stringify(action.payload));
-    return action.payload;
-  },
-  removeUser: () => {
-    localStorage.removeItem("user");
-    return null;
+// Helper to safely read cookie
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop().split(";").shift();
+    try {
+      return JSON.parse(decodeURIComponent(cookieValue));
+    } catch (err) {
+      console.error("Failed to parse cookie:", err);
+      return null;
+    }
   }
-}
+  return null;
+};
 
-})
+// Initial user state from cookie
+const initialUser = getCookie("user");
 
-export const {addUser,removeUser} = userSlice.actions;
+const userSlice = createSlice({
+  name: "user",
+  initialState: { user: initialUser || null },
+  reducers: {
+    addUser: (state, action) => {
+      state.user = action.payload;
+      // Store cookie for 1 year
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `user=${encodeURIComponent(
+        JSON.stringify(action.payload)
+      )}; path=/; expires=${expires.toUTCString()};`;
+    },
+    removeUser: (state) => {
+      state.user = null;
+      // Delete cookie
+      document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+    },
+  },
+});
+
+export const { addUser, removeUser } = userSlice.actions;
 export default userSlice.reducer;

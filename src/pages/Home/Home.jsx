@@ -12,13 +12,19 @@ import UpcomingEvents from './UpcomingEvents';
 import FoundationSection from './FoundationSection';
 import ExclusiveContent from './ExclusiveContent';
 import NewsletterSection from '../Footer/Newsletter';
-import Otp from '../resentOtp/resendOtp';
 import Comic from '../../components/Comics/Comic.jsx'
 import CharacterCarousel from '../Characters/CharacterCarousel'
 
 const Home = () => {
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return JSON.parse(decodeURIComponent(parts.pop().split(';').shift()));
+  return null;
+};
+
+const user = getCookie('user');
 
     //scroll to top feature
       useEffect(() => {

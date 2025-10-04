@@ -113,7 +113,7 @@ const SignupStep2 = ({ formData, handleChange, onNext, onBack }) => {
       toast.success('Successfully signed up!');
       setTimeout(() => {
         onNext(); // This will now go directly to step 5
-        navigate('/verifyEmail');
+        navigate('/Dashboard');
       }, 2000);
       
     } catch (err) {

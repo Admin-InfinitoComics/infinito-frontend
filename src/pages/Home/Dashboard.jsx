@@ -10,6 +10,14 @@ import { BASE_URL } from "../../utils/constants.js";
 import comicImg from "../../../assets/Images/captainMarvel.png";
 import Avatar from "../../../assets/Images/Signup/Avatar.png";
 
+// Helper to read cookie
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return JSON.parse(decodeURIComponent(parts.pop().split(";").shift()));
+  return null;
+};
+
 const ToggleRow = ({ label }) => {
   const [enabled, setEnabled] = useState(true); // Default: ON
   return (
@@ -32,18 +40,15 @@ const ToggleRow = ({ label }) => {
 const MyAccountPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [userData, setUserData] = useState({
-    username: "",
-    email: ""
-  });
+  const [userData, setUserData] = useState({ username: "", email: "" });
 
   useEffect(() => {
-    // Get user data from localStorage when component mounts
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    // Get user data from cookie instead of localStorage
+    const user = getCookie("user");
     if (user) {
       setUserData({
         username: user.username || "russian_loki",
-        email: user.email || "user@example.com"
+        email: user.email || "user@example.com",
       });
     }
   }, []);
@@ -51,10 +56,16 @@ const MyAccountPage = () => {
   const handleLogout = async () => {
     try {
       const confirmLogout = window.confirm("Are you sure you want to log out?");
-      if(confirmLogout){
-      await axios.post(`${BASE_URL}/api/logout`, {}, { withCredentials: true });
-      dispatch(removeUser()); // ✅ Clears Redux + localStorage
-      navigate("/login");
+      if (confirmLogout) {
+        await axios.post(`${BASE_URL}/api/logout`, {}, { withCredentials: true });
+
+        // Clear Redux state
+        dispatch(removeUser());
+
+        // Clear cookie
+        document.cookie = "user=; Max-Age=0; path=/;";
+
+        navigate("/login");
       }
     } catch (error) {
       alert("Logout failed. Please try again.");
@@ -63,9 +74,7 @@ const MyAccountPage = () => {
 
   return (
     <div className="bg-white px-12 pt-8 pb-16 font-sans text-black min-h-screen w-full max-w-[1280px] mx-auto">
-      <div className="text-2xl font-black tracking-widest mb-8 text-left">
-        MY ACCOUNT
-      </div>
+      <div className="text-2xl font-black tracking-widest mb-8 text-left">MY ACCOUNT</div>
 
       <div className="flex flex-row gap-8 items-start w-full">
         {/* Left Profile Panel */}
@@ -73,45 +82,15 @@ const MyAccountPage = () => {
           <img src={Avatar} alt="Avatar" className="w-28 h-28 mb-6" />
           <div className="w-full flex items-center justify-between text-xs text-gray-500 mb-2">
             <span>{userData.username}</span>
-            <button className="ml-2 text-gray-400 hover:text-black">
-              <svg
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
-              </svg>
-            </button>
           </div>
           <div className="w-full flex items-center justify-between mb-4">
-            <span className="font-semibold text-base truncate">
-              {userData.username}
-            </span>
+            <span className="font-semibold text-base truncate">{userData.username}</span>
           </div>
           <div className="w-full flex items-center justify-between text-xs text-gray-500 mb-2">
             <span>{userData.email}</span>
-            <button className="ml-2 text-gray-400 hover:text-black">
-              <svg
-                width="14"
-                height="14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
-              </svg>
-            </button>
           </div>
           <div className="w-full flex items-center justify-between">
-            <span className="font-semibold text-base truncate">
-              {userData.email}
-            </span>
+            <span className="font-semibold text-base truncate">{userData.email}</span>
           </div>
         </div>
 
@@ -120,12 +99,7 @@ const MyAccountPage = () => {
           {/* Subscription Plan */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-base font-bold tracking-wide">
-                My subscription plan
-              </h2>
-              <button className="text-2xl text-gray-400 hover:text-black font-light leading-none">
-                ×
-              </button>
+              <h2 className="text-base font-bold tracking-wide">My subscription plan</h2>
             </div>
             <div className="bg-pink-100 border border-pink-200 px-6 py-4 flex items-center gap-6 relative">
               <div className="flex items-center gap-2">
@@ -143,20 +117,11 @@ const MyAccountPage = () => {
 
           {/* My Orders */}
           <div className="mb-2">
-            <div className="text-base font-bold tracking-wide mb-2">
-              My Orders
-            </div>
+            <div className="text-base font-bold tracking-wide mb-2">My Orders</div>
             <div className="flex flex-row gap-4">
               {["TRACK ORDERS", "ORDER HISTORY"].map((item, index) => (
-                <div
-                  key={index}
-                  className="relative w-44 h-32 bg-gray-100 flex-shrink-0"
-                >
-                  <img
-                    src={comicImg}
-                    alt={item}
-                    className="w-full h-full object-cover"
-                  />
+                <div key={index} className="relative w-44 h-32 bg-gray-100 flex-shrink-0">
+                  <img src={comicImg} alt={item} className="w-full h-full object-cover" />
                   <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent text-white">
                     <span className="uppercase text-xs tracking-widest flex items-center justify-between w-full">
                       {item} <FaArrowRight className="ml-2 text-xs" />
@@ -171,14 +136,7 @@ const MyAccountPage = () => {
           <div className="mb-10">
             <div className="text-lg font-semibold mb-4">Account Settings</div>
             <div className="flex flex-col gap-4">
-              {[
-                {
-                  label: "Subscriptions related mails",
-                  stateKey: "subscriptions"
-                }
-              ].map(({ label, stateKey }) => (
-                <ToggleRow key={stateKey} label={label} />
-              ))}
+              <ToggleRow label="Subscriptions related mails" />
             </div>
           </div>
 
@@ -187,28 +145,21 @@ const MyAccountPage = () => {
             <div className="flex gap-4">
               <button
                 className="border border-black px-6 py-2 text-xs tracking-widest font-bold uppercase rounded-none transition hover:bg-gray-100 flex items-center group"
-                onClick={() => {
-                  navigate("/feedback");
-                }}
+                onClick={() => navigate("/feedback")}
               >
-                GIVE FEEDBACK{" "}
-                <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
+                GIVE FEEDBACK <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 className="border border-black px-6 py-2 text-xs tracking-widest font-bold uppercase rounded-none transition hover:bg-gray-100 flex items-center group"
-                onClick={() => {
-                  navigate("/ErrorReport");
-                }}
+                onClick={() => navigate("/ErrorReport")}
               >
-                SUPPORT US{" "}
-                <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
+                SUPPORT US <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 className="border border-red-600 text-red-600 px-6 py-2 text-xs tracking-widest font-bold uppercase rounded-none transition hover:bg-red-600 hover:text-white flex items-center group"
                 onClick={handleLogout}
               >
-                LOG OUT{" "}
-                <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
+                LOG OUT <FaArrowRight className="ml-2 text-xs group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
             <button className="text-xs tracking-widest text-gray-500 hover:text-red-600 transition font-bold uppercase ml-8">
