@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { BASE_URL } from '../utils/constants.js'
+import { BACKEND_URL } from '../utils/constants.js'
 
 export const fetchComics = async () => {
-    const res = await axios.get(`${BASE_URL}/comic`);
+    const res = await axios.get(`${BACKEND_URL}/comic`);
     // console.log("RES in services: ", res);
     return res.data.data;
 }
@@ -10,7 +10,7 @@ export const fetchComics = async () => {
 export const fetchChapter = async (comicId) => {
     console.log(comicId)
   try {
-    const res = await axios.get(`${BASE_URL}/comicChap/${comicId}/chapters`);
+    const res = await axios.get(`${BACKEND_URL}/comicChap/${comicId}/chapters`);
     console.log(res);
     return res.data.data; 
   } catch (error) {
