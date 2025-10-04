@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { latestBlog } from "../../services/userServices";
+import { getLatestBlog } from "../../services/userServices";
 import { Link } from "react-router-dom";
 const ArcheryNews = () => {
     const [title, setTitle] = useState("WORLD ARCHERY CUP")
@@ -9,7 +9,7 @@ const ArcheryNews = () => {
     useEffect(() => {
       const getblog = async () => {
         try {
-         const latest = await latestBlog();
+         const latest = await getLatestBlog();
           if (latest) {
             setTitle(latest.title);
             setSubject(latest.subject);
